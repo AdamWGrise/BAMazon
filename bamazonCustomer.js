@@ -14,22 +14,8 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("Connected as ID " + connection.threadId);
-    if (process.argv[2] === 'restockItems') {
-        restockItems();
-    } else {
-        readAllData();
-    }
+    readAllData();
 });
-
-function restockItems() {
-    connection.query("UPDATE products SET stock_quantity = 500;",
-        function (err, res) {
-            if (err) throw err;
-            console.log("\nStore restocked.\n");
-            connection.end();
-            process.exit();
-        });
-};
 
 function readAllData() {
     connection.query("SELECT * FROM products;",
@@ -47,7 +33,7 @@ function readAllData() {
 };
 
 function menu() {
-    if(fails > 4) {
+    if (fails > 4) {
         console.log("\n\n\n\n\n\n\n\n===================================\nYeah... you know what? You've had so many issues just reading and typing coherently that I'm pretty sure you should step away from the computer and stop buying stuff. Come back tomorrow now, y'hear?");
         connection.end();
         process.exit();
@@ -142,17 +128,17 @@ function completePurchase(qty, item) {
         ],
         function (err, res) {
             if (err) throw err;
-            var subtotal = Math.floor((qty*item.price)*100)/100;
-            var tax = Math.floor((qty*item.price*0.07125)*100)/100;
-            var total = Math.floor((qty*item.price*1.07125)*100)/100;;
+            var subtotal = Math.floor((qty * item.price) * 100) / 100;
+            var tax = Math.floor((qty * item.price * 0.07125) * 100) / 100;
+            var total = Math.floor((qty * item.price * 1.07125) * 100) / 100;;
             console.log("\n\n\nThanks for your purchase! Here's your receipt.");
             console.log("\n\n###############################\n\nItem: " + item.product_name +
-            '\nQuantity: ' + qty +
-            '\n\n-------------------------------' +
-            '\nSubtotal: $' + subtotal +
-            '\nTax: $' + tax +
-            '\n\n===============================' +
-            '\nTOTAL: $' + total + '\n\n###############################\n\n');
+                '\nQuantity: ' + qty +
+                '\n\n-------------------------------' +
+                '\nSubtotal: $' + subtotal +
+                '\nTax: $' + tax +
+                '\n\n===============================' +
+                '\nTOTAL: $' + total + '\n\n###############################\n\n');
             menu();
         });
 };
