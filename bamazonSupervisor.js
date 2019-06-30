@@ -49,7 +49,7 @@ function menu() {
         } else if (answers.selection === "View product sales by department") {
             viewDeptSales();
         } else if (answers.selection === "Create new department") {
-            // createDept();
+            addNewDept();
         } else {
             exitDashboard();
         }
@@ -71,6 +71,32 @@ function viewDeptSales() {
             console.table(['Dept ID','Dept Name','Overhead','Sales','Profit'], tableValues);
             menu();
         });
+};
+
+function addNewDept() {
+    inquirer.prompt([{
+            type: "input",
+            name: "department_name",
+            message: "\nWhat will be the name of the new department?",
+        },
+        {
+            type: "input",
+            name: "overhead",
+            message: "\nIndicate the overhead costs of this new department.",
+        },
+    ]).then(function (answers) {
+        if (answers.overhead != parseFloat(answers.overhead, 10)) {
+            console.log('\n\nERROR: Ensure you enter a number in decimal form for the overhead costs.\n');
+            menu();
+        } else {
+            connection.query("INSERT INTO departments (department_name, over_head_costs) VALUES ('" + answers.department_name + "','" + answers.overhead + "');",
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("\n\n\n" + answers.department_name + " department added with an overhead cost of " + answers.overhead + " Have your managers add some products to the catalog to begin tracking sales.\n");
+                    menu();
+                });
+        };
+    });
 };
 
 function exitDashboard() {

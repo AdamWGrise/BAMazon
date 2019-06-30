@@ -1,6 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var validItems = [];
+var depts = [];
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -54,6 +55,18 @@ function restockItems() {
     });
 };
 
+function getDepts() {
+    connection.query("SELECT * FROM departments;",
+        function (err, res) {
+            if (err) throw err;
+            if (depts.length === 0) {
+                for (i = 0; i < res.length; i++) {
+                    depts.push(res[i].department_name);
+                };
+            };
+        });
+};
+
 function readAllData() {
     connection.query("SELECT * FROM products;",
         function (err, res) {
@@ -92,16 +105,21 @@ function viewLowInventory() {
     });
 };
 
+
+// add function to restrict department choices to the ones from the table
+
 function addNewProduct() {
+    getDepts();
     inquirer.prompt([{
             type: "input",
             name: "product_name",
             message: "\nEnter the name of the new item you'd like to add to the inventory."
         },
         {
-            type: "input",
+            type: "list",
             name: "department_name",
-            message: "\nWhich department will this be under? E.g., Clothing, Books, Tools & Home Improvement, Movies, Video Games, Electronics, etc.",
+            message: "\nWhich department will this be under?",
+            choices: depts
         },
         {
             type: "input",
