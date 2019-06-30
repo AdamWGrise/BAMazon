@@ -120,7 +120,8 @@ function buyOut(qty, item) {
 
 function completePurchase(qty, item) {
     connection.query("UPDATE products SET ? WHERE ?", [{
-                stock_quantity: item.stock_quantity - qty
+                stock_quantity: item.stock_quantity - qty,
+                product_sales: item.product_sales + (qty*item.price)
             },
             {
                 item_id: item.item_id
