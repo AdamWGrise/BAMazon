@@ -2,6 +2,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
+var moment = require("moment");
 
 // Some global variables for customers.
 var validItems = [];
@@ -71,7 +72,7 @@ function readAllData() {
                 tableValues.push(tableRow);
                 validItems.push(res[i].item_id);
             };
-            console.table(['Item ID','Product Name','Department','Price','Stock'], tableValues);
+            console.table(['Item ID', 'Product Name', 'Department', 'Price', 'Stock'], tableValues);
             console.log('\n');
             menu();
         });
@@ -140,7 +141,7 @@ function buyItem(productNo, qty) {
         function (err, res) {
             if (err) throw err;
             if (res[0].stock_quantity === 0) {
-                outOfStock(res[0]);
+                // outOfStock(res[0]);
                 console.log("\nI'm sorry; '" + res[0].product_name + "' is completely out of stock. Feel free to purchase something else or wait until we've restocked!\n");
                 fails++;
                 menu();
@@ -170,6 +171,9 @@ function buyOut(qty, item) {
 
 // Now we finalize the purchase, updating the database with an UPDATE statement and also logging out a receipt for the customer.
 function completePurchase(qty, item) {
+    var subtotal = Math.floor((qty * item.price) * 100) / 100;
+    var tax = Math.floor((qty * item.price * 0.07125) * 100) / 100;
+    var total = Math.floor((qty * item.price * 1.07125) * 100) / 100;
     connection.query("UPDATE products SET ? WHERE ?", [{
                 stock_quantity: item.stock_quantity - qty,
                 product_sales: item.product_sales + (qty * item.price)
@@ -180,9 +184,6 @@ function completePurchase(qty, item) {
         ],
         function (err, res) {
             if (err) throw err;
-            var subtotal = Math.floor((qty * item.price) * 100) / 100;
-            var tax = Math.floor((qty * item.price * 0.07125) * 100) / 100;
-            var total = Math.floor((qty * item.price * 1.07125) * 100) / 100;;
             console.log("\n\n\nThanks for your purchase! Here's your receipt.");
             console.log("\n\n###############################\n\nItem: " + item.product_name +
                 '\nQuantity: ' + qty +
@@ -191,6 +192,10 @@ function completePurchase(qty, item) {
                 '\nTax: $' + tax +
                 '\n\n===============================' +
                 '\nTOTAL: $' + total + '\n\n###############################\n\n');
+        });
+    connection.query("INSERT INTO transactions (systemUser, dateAndTime, transaction_type, product, department, quantity, transaction_amount) VALUES ('" + currentUser + "','" + new Date().toISOString().slice(0,19).replace('T', ' ') + "','Sale'," + item.item_id + ",'" + item.department_name + "'," + qty + "," + total + ")",
+        function (err, res) {
+            if (err) throw err;
             menu();
         });
 };

@@ -91,7 +91,6 @@ function restockItems() {
     });
 };
 
-
 function readAllData() {
     connection.query("SELECT * FROM products;",
     function (err, res) {
@@ -107,6 +106,26 @@ function readAllData() {
             validItems.push(res[i].item_id);
         };
         console.table(['Item ID','Product Name','Department','Price','Stock'], tableValues);
+        console.log('\n');
+        menu();
+    });
+};
+
+function transactionLog() {
+    connection.query("SELECT T.systemUser, T.dateAndTime, P.product_name, P.item_id, P.price, T.department, T.quantity, T.transaction_amount FROM transactions T INNER JOIN products P ON P.item_id = T.product ORDER BY T.dateAndTime DESC;",
+    function (err, res) {
+        if (err) throw err;
+        console.log('\n\n');
+        tableValues = [];
+        var tableRow = [];
+        validItems = [];
+        for (i = 0; i < res.length; i++) {
+            tableRow = [];
+            tableRow.push(res[i].systemUser, res[i].dateAndTime, res[i].product_name, res[i].item_id, res[i].price, res[i].department, res[i].quantity, res[i].transaction_amount);
+            tableValues.push(tableRow);
+            validItems.push(res[i].item_id);
+        };
+        console.table(['Customer','Date & Time','Product Name','Product ID','Price','Department','Quantity','Transaction Total'], tableValues);
         console.log('\n');
         menu();
     });
@@ -197,7 +216,7 @@ function menu() {
         type: "list",
         name: "selection",
         message: "\nPlease select an action, " + currentUser + ".",
-        choices: ["Show inventory", "View low inventory", "Restock an item", "Add a new product", "Exit"]
+        choices: ["Show inventory", "View low inventory", "Restock an item", "Add a new product", "View transaction log", "Exit"]
     }).then(function (answers) {
         if (answers.selection === "Show inventory") {
             readAllData();
@@ -207,6 +226,8 @@ function menu() {
             restockItems();
         } else if (answers.selection === "Add a new product") {
             addNewProduct();
+        } else if (answers.selection === "View transaction log") {
+            transactionLog();
         } else {
             exitDashboard();
         }

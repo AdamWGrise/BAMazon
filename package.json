@@ -19,6 +19,8 @@
   "dependencies": {
     "console.table": "^0.10.0",
     "inquirer": "^6.4.1",
-    "mysql": "^2.17.1"
+    "moment": "^2.24.0",
+    "mysql": "^2.17.1",
+    "nodemon": "^1.19.1"
   }
 }
