@@ -43,7 +43,7 @@ function validate() {
                 }
             ]).then(function (answers) {
                 for (i = 0; i < res.length; i++) {
-                    if (answers.username === res[i].username && answers.password === res[i].accessKey) {
+                    if (answers.username === res[i].username && answers.password === res[i].accessKey && res[i].security_role === 'Manager') {
                         currentUser = res[i].username;
                         readAllData();
                         return;

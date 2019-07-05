@@ -2,7 +2,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var cTable = require("console.table");
-var moment = require("moment");
 
 // Some global variables for customers.
 var validItems = [];
@@ -185,13 +184,13 @@ function completePurchase(qty, item) {
         function (err, res) {
             if (err) throw err;
             console.log("\n\n\nThanks for your purchase! Here's your receipt.");
-            console.log("\n\n###############################\n\nItem: " + item.product_name +
-                '\nQuantity: ' + qty +
-                '\n\n-------------------------------' +
-                '\nSubtotal: $' + subtotal +
-                '\nTax: $' + tax +
-                '\n\n===============================' +
-                '\nTOTAL: $' + total + '\n\n###############################\n\n');
+            console.log("\n\n#######################################\n#\n# Item: " + item.product_name +
+                '\n# Quantity: ' + qty +
+                '\n#\n# -------------------------------' +
+                '\n# Subtotal: $' + subtotal +
+                '\n# Tax: $' + tax +
+                '\n# \n# ===============================' +
+                '\n# TOTAL: $' + total + '\n#\n#######################################\n\n');
         });
     connection.query("INSERT INTO transactions (systemUser, dateAndTime, transaction_type, product, department, quantity, transaction_amount) VALUES ('" + currentUser + "','" + new Date().toISOString().slice(0,19).replace('T', ' ') + "','Sale'," + item.item_id + ",'" + item.department_name + "'," + qty + "," + total + ")",
         function (err, res) {
