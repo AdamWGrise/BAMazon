@@ -80,7 +80,7 @@ function readAllData() {
 // Main menu. Kicks you out if you have continually put in letters or symbols where only numbers should go, tried to buy too many of an item, etc.
 function menu() {
     if (fails > 4) {
-        console.log("\n\n\n\n\n\n\n\n===================================\nYeah... you know what, " + currentUser + "? You've had so many issues just reading and typing coherently that I'm pretty sure you should step away from the computer and stop buying stuff. Come back tomorrow now, y'hear?");
+        console.log("\n\n\n\n===================================\nYeah... you know what, " + currentUser + "? You've had so many issues just reading and typing coherently that I'm pretty sure you should step away from the computer and stop buying stuff. Come back tomorrow now, y'hear?");
         connection.end();
         process.exit();
     }
